@@ -1,11 +1,7 @@
-const express = require("express")
-const router = express.Router()
+const {Category} = require("./categories.model.js")
 
-const {Category} = require("./categoryModel")
-
-router.route("/")
-  .get(async(req,res) => {
-    try{
+const getAllCategories = async (req,res) => {
+  try{
       const categories = await Category.find({})
       if(!categories){
         res.status(400).json({success: false, message: "No categories found. Sorry!"})
@@ -15,9 +11,10 @@ router.route("/")
       console.log(error)
       res.status(400).json({success: false, message: "Couldn't retrieve data. Sorry!"})
     }
-  })
-  .post(async(req,res) => {
-    const {title, img} = req.body;
+}
+
+const addCategory = async (req,res) => {
+  const {title, img} = req.body;
 
     try{
       const newCategory = new Category({
@@ -29,6 +26,6 @@ router.route("/")
     }catch(error){
       res.status(401).json({success: false, message: "Couldn't save category. Sorry!"})
     }
-  })
+}
 
-  module.exports = router
+module.exports = {getAllCategories, addCategory}

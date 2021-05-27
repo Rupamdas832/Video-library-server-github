@@ -1,9 +1,6 @@
 const mongoose = require("mongoose")
 
-const mySecret = process.env['MongodbCredentials']
-
-const uri = mySecret
-
+const uri = process.env['MongodbCredentials']
 
 const initializeDBconnection = async () => {
   try{
@@ -11,7 +8,7 @@ const initializeDBconnection = async () => {
       useNewUrlParser: true, 
       useUnifiedTopology: true
       })
-      if(response){
+      if(mongoose.connection.readyState === 1){
         console.log("MONGOOSE connected successfuly")
       }
   }catch (error){

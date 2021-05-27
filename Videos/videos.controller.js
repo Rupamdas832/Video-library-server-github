@@ -1,11 +1,7 @@
-const express = require("express")
-const router = express.Router()
+const {Video} = require("./videos.model.js")
 
-const {Video} = require("./videoModel")
-
-router.route("/")
-  .get(async(req,res) => {
-    try{
+const getAllVideos = async (req,res) => {
+  try{
       const videos = await Video.find({})
       if(!videos){
         res.status(400).json({success: false, message: "No videos found. Sorry!"})
@@ -15,9 +11,10 @@ router.route("/")
       console.log(error)
       res.status(400).json({success: false, message: "Couldn't retrieve data. Sorry!"})
     }
-  })
-  .post(async(req,res) => {
-    const {videoId, title, channelName, categoryId, thumbnail} = req.body;
+}
+
+const addVideo = async (req,res) => {
+  const {videoId, title, channelName, categoryId, thumbnail} = req.body;
 
     try{
       const newVideo = new Video({
@@ -32,6 +29,6 @@ router.route("/")
     }catch(error){
       res.status(401).json({success: false, message: "Couldn't save video. Sorry!"})
     }
-  })
+}
 
-  module.exports = router
+module.exports = {getAllVideos, addVideo}

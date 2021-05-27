@@ -14,17 +14,17 @@ app.get("/", (req,res) => {
   res.json({success: true, mesg: "Ya its working"})
 })
 
-const loginUser = require("./Users/login.js")
-app.use("/login", loginUser)
+const userRouter = require("./Users/users.router.js")
+app.use("/", userRouter)
 
-const signupUser = require("./Users/signup.js")
-app.use("/signup", signupUser)
+const videosRouter = require("./Videos/videos.router.js")
+app.use("/videos",videosRouter)
 
-const videos = require("./Videos/videoData.js")
-app.use("/videos",videos)
+const videoLibraryRouter = require("./VideoLibrary/videoLibrary.router.js")
+app.use("/video-library",videoLibraryRouter)
 
-const categories = require("./Categories/categoryData.js")
-app.use("/categories", categories)
+const categoriesRouter = require("./Categories/categories.router.js")
+app.use("/categories", categoriesRouter)
 
 
 app.listen(3000, () => {
