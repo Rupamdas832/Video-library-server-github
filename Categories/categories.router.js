@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 
-const {getAllCategories, addCategory} = require("./categories.controller.js")
+const { getAllCategories, addCategory } = require("./categories.controller.js")
 
 router.route("/").get(getAllCategories)
 

@@ -14,7 +14,7 @@ const loginUserWithCredentials = async (req, res) => {
       return res.status(401).json({ success: false, message: "Username not found" })
     } if (bcrypt.compareSync(password, findUser.password)) {
 
-      const token = jwt.sign({ email: email }, secretKey, { expiresIn: '24h' })
+      const token = jwt.sign({ userId: findUser._id }, secretKey, { expiresIn: '24h' })
       findUser.password = undefined
       res.status(200).json({ success: true, user: findUser, token: token })
     }
@@ -40,9 +40,10 @@ const signupUserWithEmailAndPassword = async (req, res) => {
       password: bcrypt.hashSync(password, 8)
     })
 
-    const token = jwt.sign({ email: email }, secretKey, { expiresIn: '24h' })
-
     const saveUser = await newUser.save()
+
+    const token = jwt.sign({ userId: saveUser._id }, secretKey, { expiresIn: '24h' })
+
     saveUser.password = undefined
     res.status(201).json({ success: true, user: saveUser, token: token })
 
@@ -51,34 +52,34 @@ const signupUserWithEmailAndPassword = async (req, res) => {
   }
 }
 
-const userAuthentication = async (req,res) => {
-  const {userEmail} = req
-    
-    try{
-      const foundUser = await User.findOne({email: userEmail})
+const userAuthentication = async (req, res) => {
+  const { userId } = req
 
-      if(!foundUser){
-          return res.status(401).json({success: false, message: "User Email not found"})
-        }else {
-          foundUser.password = undefined
-          res.status(200).json({success: true, user: foundUser})
-          }
-    }catch(error){
-      console.log(error)
-      res.status(500).json({success: false, message: "Sorry! Something went wrong"})
+  try {
+    const foundUser = await User.findById(userId)
+
+    if (!foundUser) {
+      return res.status(401).json({ success: false, message: "User Email not found" })
+    } else {
+      foundUser.password = undefined
+      res.status(200).json({ success: true, user: foundUser })
     }
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ success: false, message: "Sorry! Something went wrong" })
+  }
 }
 
-const authVerify = (req,res,next) => {
+const authVerify = (req, res, next) => {
   const token = req.headers.authorization;
-  
-  try{
+
+  try {
     const decoded = jwt.verify(token, secretKey)
-    req.userEmail = decoded.email
+    req.userId = decoded.userId
     return next();
-  }catch(error){
-    res.status(401).json({ message: "Unauthorised access, please add the token"})
-    }
+  } catch (error) {
+    res.status(401).json({ message: "Unauthorised access, please add the token" })
+  }
 }
 
 module.exports = { loginUserWithCredentials, signupUserWithEmailAndPassword, userAuthentication, authVerify }
